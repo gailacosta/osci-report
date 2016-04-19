@@ -4,6 +4,7 @@
 # https://github.com/middleman/middleman-blog/blob/master/lib/middleman-blog/blog_article.rb
 module Book
   class Chapter < Middleman::Sitemap::Resource
+
     # @return [Book::BookExtension] reference to the parent BookExtension instance
     # (necessary for comparison between chapters)
     attr_reader :book
@@ -44,14 +45,13 @@ module Book
     # Returns the next chapter object, or false if this is the last chapter
     # @return [Book::Chapter]
     def next_chapter
-      @book.chapters.find { |p| p.rank == self.rank + 1 }
+      @book.chapters.select { |p| p.rank > rank }.min_by(&:rank)
     end
 
     # Returns the previous chapter object, or false if this is the first chapter
     # @return [Book::Chapter]
-    # TODO: fix this method, currently it always returns to the cover page
     def prev_chapter
-      @book.chapters.find { |p| p.rank == self.rank - 1 }
+      @book.chapters.select { |p| p.rank < rank }.max_by(&:rank)
     end
   end
 end

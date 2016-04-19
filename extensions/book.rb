@@ -75,7 +75,6 @@ module Book
     def generate_chapters!(resources)
       contents = resources.find_all { |p| p.data.sort_order }
       contents.each do |p|
-
         source, path, metadata = p.source_file, p.destination_path, p.metadata
         chapter = Book::Chapter.new(@app.sitemap, path, source, self)
 
