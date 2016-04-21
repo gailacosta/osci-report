@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package xmlns="http://www.idpf.org/2007/opf"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xml:lang="en"
+         unique-identifier="bookid"
+         version="3.0">
+  <metadata>
+    <dc:title>TITLE GOES HERE</dc:title>
+    <dc:creator>AUTHOR GOES HERE</dc:creator>
+    <dc:publisher>PUBLISHER GOES HERE</dc:publisher>
+    <dc:date>DATE GOES HERE</dc:date>
+    <dc:identifier id="bookid">ID GOES HERE</dc:identifier>
+    <dc:language>en-US</dc:language>
+    <meta name="cover" content="cover-image" />
+    <meta property="dcterms:modified">CURRENT TIME GOES HERE</meta>
+  </metadata>
+  <manifest>
+    <!-- <item> tags go here for each file in package -->
+  </manifest>
+  <spine>
+    <!-- <itemref> tags go here for each chapter in reading order -->
+  </spine>
+</package>

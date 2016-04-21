@@ -1,5 +1,6 @@
 require_relative "book/helpers.rb"
 require_relative "book/book_chapter.rb"
+require_relative "book/epub.rb"
 
 module Book
   class BookExtension < Middleman::Extension
@@ -24,7 +25,7 @@ module Book
       app.after_build do |builder|
         book = app.extensions[:book]
         book.generate_pdf if environment? :pdf
-        book.generate_epub if environment? :epub
+        Epub.new(book.chapters, app.sitemap) if environment? :epub
       end
     end
 
@@ -47,15 +48,6 @@ module Book
     # @return [String]
     def title
       info.title.main
-    end
-
-    def generate_epub
-      source_files = ""
-      chapters.sort_by(&:rank).each do |c|
-        source_files += c.source_file + " "
-      end
-
-      puts `pandoc -S -o dist/book.epub title.txt #{source_files} --toc`
     end
 
     # Calls the Prince CLI utility with args based on extension options
