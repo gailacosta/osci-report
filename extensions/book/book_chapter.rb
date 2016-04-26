@@ -1,9 +1,8 @@
-# A module that adds chapter-specific methods to Resources.
-# This is heavily inspired by the BlogArticle module in
-# the official Middleman-Blog extension:
-# https://github.com/middleman/middleman-blog/blob/master/lib/middleman-blog/blog_article.rb
+require_relative "xml_parse"
+
 module Book
   class Chapter < Middleman::Sitemap::Resource
+    include XMLParse
 
     # @return [Book::BookExtension] reference to the parent BookExtension instance
     # (necessary for comparison between chapters)
@@ -52,6 +51,37 @@ module Book
     # @return [Book::Chapter]
     def prev_chapter
       @book.chapters.select { |p| p.rank < rank }.max_by(&:rank)
+    end
+
+    # Render chapter with epub layout
+    # @return [String]
+    def epub_text
+      render layout: "epub_chapter"
+    end
+
+    # Pass in a string
+    # Return a Nokogiri nodeset that has been processed
+    def parse_chapter_text
+      fragment = Nokogiri::HTML::DocumentFragment.parse(epub_text)
+      # TODO: format links to work locally
+      fragment.css("a").each { |link| link["href"] = "#" }
+      fragment
+    end
+
+    # Writes the content of this chapter to a new HTML file formatted for epub
+    def write_epub_html
+      #TODO: Move info about output paths to parent Book object somehow
+      output_path = "dist/epub/OEBPS/"
+      template = get_template("chapter.html")
+      filename = output_path + title + ".html"
+
+      File.open(filename, "w") do |f|
+        doctitle         = template.at_css("title")
+        doctitle.content = title
+        fragment         = parse_chapter_text
+        fragment.parent  = template.at_css("body")
+        f.puts template
+      end
     end
   end
 end

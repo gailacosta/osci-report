@@ -1,6 +1,5 @@
 require "fileutils"
 require "nokogiri"
-require_relative "xml_parse"
 
 module Book
   class Epub
@@ -35,11 +34,9 @@ module Book
       Dir.chdir("dist") do
         clean_directory("epub")
         Dir.chdir("epub") do
-          clean_directory("META-INF")
-          clean_directory("OEBPS")
+          ["META-INF", "OEBPS"].each { |dir| clean_directory(dir) }
           Dir.chdir("OEBPS") do
-            clean_directory("assets")
-            Dir.chdir("assets") { clean_directory("images") }
+            ["assets", "assets/images"].each { |dir| clean_directory(dir) }
           end
         end
       end
@@ -71,27 +68,7 @@ module Book
 
     # Construct each epub chapter
     def build_chapters
-      chapters.each do |chapter|
-        write_chapter(chapter)
-      end
-    end
-
-    # Expects a Chapter resource object
-    # Writes the content of this chapter to a new HTML file formatted for epub
-    def write_chapter(chapter)
-      template = get_template("chapter.html")
-      filename = output_path + chapter.title + ".html"
-
-      File.open(filename, "w") do |f|
-        title = template.at_css("title")
-        title.content = chapter.title
-
-        chapter_text = chapter.render(layout: "epub_chapter")
-        fragment = parse_chapter_text(chapter_text)
-        fragment.parent = template.at_css("body")
-
-        f.puts template
-      end
+      chapters.each(&:write_epub_html)
     end
 
     def generate_cover

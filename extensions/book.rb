@@ -7,14 +7,10 @@ module Book
     self.defined_helpers = [Book::Helpers]
     option :pdf_output_path, "dist/book.pdf", "Where to write generated PDF"
     option :prince_cli_flags, "--no-artificial-fonts", "Command-line flags for Prince PDF utility"
+    option :epub_output_path, "dist/epub/", "Where to write generated epub file"
     expose_to_template :chapters, :title, :author
 
-    # @return [Array<Middleman::Sitemap::Resource>] an array of resource objects
-    # which have been extended with the methods in the BookChapter module.
-    attr_reader :chapters
-
-    # @return [Middleman::Util::EnhancedHash] with the contents of the book.yml data file
-    attr_reader :info
+    attr_reader :chapters, :info, :pdf_output_path, :epub_output_path
 
     def initialize(app, options_hash = {}, &block)
       super
