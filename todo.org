@@ -1,0 +1,9 @@
+* Epub Generation 
+** TODO Enable generation of EPUB component files
+*** TODO Content.opf file (manifest, etc)
+*** TODO Toc.ncx file
+*** TODO Container.xml
+** TODO Format links to work inside of package
+** TODO auto-generate manifest for package based on folder contents
+
+
