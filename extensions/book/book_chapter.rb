@@ -1,4 +1,5 @@
 require_relative "xml_parse"
+require "slugify"
 
 module Book
   class Chapter < Middleman::Sitemap::Resource
@@ -73,7 +74,7 @@ module Book
       #TODO: Move info about output paths to parent Book object somehow
       output_path = "dist/epub/OEBPS/"
       template = get_template("chapter.html")
-      filename = output_path + title + ".html"
+      filename = output_path + title.slugify + ".html"
 
       File.open(filename, "w") do |f|
         doctitle         = template.at_css("title")

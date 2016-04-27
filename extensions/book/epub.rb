@@ -13,13 +13,13 @@ module Book
       @output_path   = "dist/epub/OEBPS/"
       @template_path = "extensions/book/templates/"
       @metadata      = metadata
-
       epub_build_script(metadata, sitemap)
     end
 
     # Run this process to build the complete epub file
     def epub_build_script(metadata, sitemap)
       build_epub_dir
+      copy_boilerplate_files
       copy_images(sitemap)
       copy_css
       build_chapters
@@ -31,7 +31,6 @@ module Book
       valid_start_chars = /[A-z]/
       valid_start_chars.freeze
       return false unless dirname.chr.match(valid_start_chars)
-
       FileUtils.rm_rf(dirname) if Dir.exist?(dirname)
       Dir.mkdir(dirname)
     end
@@ -63,6 +62,11 @@ module Book
           end
         end
       end
+    end
+
+    def copy_boilerplate_files
+      FileUtils.cp("extensions/book/templates/mimetype", "dist/epub/mimetype")
+      FileUtils.cp("extensions/book/templates/container.xml", "dist/epub/META-INF/container.xml")
     end
 
     # Copy the template CSS file into the epub assets folder
@@ -100,38 +104,51 @@ module Book
       filename    = output_path + "content.opf"
       template    = get_template("content.opf")
       manifest    = ""
+      spine       = ""
 
       # TODO: write this method as a recursive process to be more concise
       Dir.chdir(output_path) do
         chapter_files = Dir.glob("*.html")
-        chapter_files.each do |chapter|
-          manifest << generate_item_tag(chapter)
+
+        chapter_files.each_with_index do |chapter, index|
+          item_id = "chapter#{index + 1}"
+          manifest << generate_item_tag(chapter, item_id)
+          spine    << generate_itemref_tag(item_id)
         end
 
-        assets = Dir.glob("assets/*")
         # This method needs to recursively go inside of subdirectories
-        assets.each do |asset|
+        assets = Dir.glob("assets/*")
+        assets.each_with_index do |asset, index|
+          asset_id = "a#{index + 1}"
           if Dir.exist? asset
-            subfolder_contents = Dir.glob("#{asset}/*")
-            subfolder_contents.each { |item| manifest << generate_item_tag(item) }
+            contents = Dir.glob("#{asset}/*")
+
+            contents.each_with_index do |item, index|
+              asset_id = "b#{index + 1}"
+              manifest << generate_item_tag(item, asset_id)
+            end
           else
-            manifest << generate_item_tag(asset)
+            manifest << generate_item_tag(asset, asset_id)
           end
         end
+
       end
 
-      puts manifest
-
-      # Build the manifest (if this method is called last, just read contents of the OEBPS dir)
       # Build the spine
-
       File.open(filename, "w") do |f|
-        template.at_css("dc|title").content      = metadata[:title]
-        template.at_css("dc|creator").content    = metadata[:author]
-        template.at_css("dc|publisher").content  = metadata[:publisher]
-        template.at_css("dc|date").content       = metadata[:date]
-        template.at_css("dc|identifier").content = metadata[:book_id]
+        template.at_css("dc|title").content         = metadata[:title]
+        template.at_css("dc|creator").content       = metadata[:author]
+        template.at_css("dc|publisher").content     = metadata[:publisher]
+        template.at_css("dc|date").content          = metadata[:date]
+        template.at_css("dc|identifier").content    = metadata[:book_id]
 
+        modified = Time.new.strftime("%Y-%m-%dT%H:%M:%S%:z")
+        template.at_css("meta[property='dcterms:modified']").content = modified
+
+        manifest_contents = Nokogiri::XML::DocumentFragment.parse(manifest)
+        manifest_contents.parent = template.at_css("manifest")
+        spine_contents = Nokogiri::XML::DocumentFragment.parse(spine)
+        spine_contents.parent = template.at_css("spine")
         f.puts template
       end
     end

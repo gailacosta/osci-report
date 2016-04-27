@@ -16,9 +16,7 @@
     <meta property="dcterms:modified">CURRENT TIME GOES HERE</meta>
   </metadata>
   <manifest>
-    <!-- <item> tags go here for each file in package -->
   </manifest>
   <spine>
-    <!-- <itemref> tags go here for each chapter in reading order -->
   </spine>
 </package>

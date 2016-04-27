@@ -13,7 +13,7 @@ module Book
       File.open(path) { |f| Nokogiri::XML(f) }
     end
 
-    def generate_item_tag(filename)
+    def generate_item_tag(filename, id)
       path = Pathname.new(filename)
       media_type = ""
 
@@ -29,7 +29,13 @@ module Book
       end
 
       <<-EOM
-        "<item id="#{filename}" href="#{filename}" media-type="#{media_type}"/>"
+        <item id="#{id}" href="#{filename}" media-type="#{media_type}"/>
+      EOM
+    end
+
+    def generate_itemref_tag(id)
+      <<-EOM
+        <itemref idref="#{id}" />
       EOM
     end
   end
