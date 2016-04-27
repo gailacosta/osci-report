@@ -1,6 +1,7 @@
 require_relative "book/helpers.rb"
 require_relative "book/book_chapter.rb"
 require_relative "book/epub.rb"
+require "time"
 
 module Book
   class BookExtension < Middleman::Extension
@@ -54,7 +55,7 @@ module Book
         :title     => title,
         :author    => author,
         :publisher => "Book Publisher",
-        :date      => "Book Date",
+        :date      => Time.now.to_date.to_s,
         :book_id   => "BOOK ID"
       }
     end

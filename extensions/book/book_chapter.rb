@@ -65,7 +65,7 @@ module Book
     def parse_chapter_text
       fragment = Nokogiri::HTML::DocumentFragment.parse(epub_text)
       # TODO: format links to work locally
-      fragment.css("a").each { |link| link["href"] = "#" }
+      fragment.css("a").each { |node| node.replace(node.text) }
       fragment
     end
 

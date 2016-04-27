@@ -26,6 +26,8 @@ module Book
         media_type = "image/jpeg"
       when ".png"
         media_type = "image/png"
+      when ".svg"
+        media_type = "image/svg"
       end
 
       <<-EOM
