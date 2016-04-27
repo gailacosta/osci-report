@@ -4,19 +4,26 @@ require "nokogiri"
 module Book
   class Epub
     include XMLParse
-    attr_reader :chapters, :template_path, :output_path
+    attr_reader :chapters, :template_path, :output_path, :metadata
 
     # Pass in an array of chapter objects on initialization
-    # Also expects the sitemap to be passed in
-    def initialize(chapters, sitemap)
+    # Also expects  a hash of metadata and the sitemap to be passed in
+    def initialize(chapters, metadata, sitemap)
       @chapters      = chapters
       @output_path   = "dist/epub/OEBPS/"
       @template_path = "extensions/book/templates/"
+      @metadata      = metadata
 
+      epub_build_script(metadata, sitemap)
+    end
+
+    # Run this process to build the complete epub file
+    def epub_build_script(metadata, sitemap)
       build_epub_dir
       copy_images(sitemap)
       copy_css
       build_chapters
+      build_opf(metadata)
     end
 
     # Ensure a clean workspace
@@ -87,13 +94,46 @@ module Book
       # Write the file to dist/epub/OEBPS/toc.ncx
     end
 
-    def build_opf
-      # This method should probably be one of the last to be called
-      # Load OPF template file into Nokogiri
-      # Populate metadata
+    # Expects a hash of book metadata to be passed in
+    def build_opf(metadata)
+      output_path = "dist/epub/OEBPS/"
+      filename    = output_path + "content.opf"
+      template    = get_template("content.opf")
+      manifest    = ""
+
+      # TODO: write this method as a recursive process to be more concise
+      Dir.chdir(output_path) do
+        chapter_files = Dir.glob("*.html")
+        chapter_files.each do |chapter|
+          manifest << generate_item_tag(chapter)
+        end
+
+        assets = Dir.glob("assets/*")
+        # This method needs to recursively go inside of subdirectories
+        assets.each do |asset|
+          if Dir.exist? asset
+            subfolder_contents = Dir.glob("#{asset}/*")
+            subfolder_contents.each { |item| manifest << generate_item_tag(item) }
+          else
+            manifest << generate_item_tag(asset)
+          end
+        end
+      end
+
+      puts manifest
+
       # Build the manifest (if this method is called last, just read contents of the OEBPS dir)
       # Build the spine
-      # Write the file to dist/epub/OEBPS/content.opf
+
+      File.open(filename, "w") do |f|
+        template.at_css("dc|title").content      = metadata[:title]
+        template.at_css("dc|creator").content    = metadata[:author]
+        template.at_css("dc|publisher").content  = metadata[:publisher]
+        template.at_css("dc|date").content       = metadata[:date]
+        template.at_css("dc|identifier").content = metadata[:book_id]
+
+        f.puts template
+      end
     end
   end
 end

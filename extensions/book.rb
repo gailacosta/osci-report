@@ -21,7 +21,7 @@ module Book
       app.after_build do |builder|
         book = app.extensions[:book]
         book.generate_pdf if environment? :pdf
-        Epub.new(book.chapters, app.sitemap) if environment? :epub
+        Epub.new(book.chapters, book.metadata, app.sitemap) if environment? :epub
       end
     end
 
@@ -44,6 +44,19 @@ module Book
     # @return [String]
     def title
       info.title.main
+    end
+
+    # Return a hash with important book metadata
+    # Pass this object to the EPUB instance for metadata population
+    # TODO: Add more real data here
+    def metadata
+      {
+        :title     => title,
+        :author    => author,
+        :publisher => "Book Publisher",
+        :date      => "Book Date",
+        :book_id   => "BOOK ID"
+      }
     end
 
     # Calls the Prince CLI utility with args based on extension options

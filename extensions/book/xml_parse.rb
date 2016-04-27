@@ -1,5 +1,6 @@
 require "nokogiri"
 require "fileutils"
+require "pathname"
 
 module Book
   # XMLParse module
@@ -10,6 +11,26 @@ module Book
       # TODO: move info about template paths into parent book object somehow
       path = "extensions/book/templates/" + file
       File.open(path) { |f| Nokogiri::XML(f) }
+    end
+
+    def generate_item_tag(filename)
+      path = Pathname.new(filename)
+      media_type = ""
+
+      case path.extname
+      when ".html"
+        media_type = "application/xhtml+xml"
+      when ".css"
+        media_type = "text/css"
+      when ".jpg"
+        media_type = "image/jpeg"
+      when ".png"
+        media_type = "image/png"
+      end
+
+      <<-EOM
+        "<item id="#{filename}" href="#{filename}" media-type="#{media_type}"/>"
+      EOM
     end
   end
 end

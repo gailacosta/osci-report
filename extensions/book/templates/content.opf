@@ -3,6 +3,7 @@
          xmlns:dc="http://purl.org/dc/elements/1.1/"
          xml:lang="en"
          unique-identifier="bookid"
+         prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/"
          version="3.0">
   <metadata>
     <dc:title>TITLE GOES HERE</dc:title>
