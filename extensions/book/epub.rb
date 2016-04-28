@@ -95,8 +95,9 @@ module Book
     def build_toc
       filename = output_path + "toc.ncx"
       template = get_template("toc.ncx")
-      template.at_css("docTitle").content = metadata[:title]
-      template.at_css("docAuthor").content = metadata[:author]
+      template.at_css("docTitle text").content = metadata[:title]
+      template.at_css("docAuthor text").content = metadata[:author]
+      template.at_css("meta")["content"] = metadata[:book_id]
 
       nav_points = ""
       chapters.each_with_index { |c, i| nav_points << c.generate_navpoint(i + 1) }

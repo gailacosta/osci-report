@@ -60,6 +60,10 @@ module Book
       render layout: "epub_chapter"
     end
 
+    # TODO: build a proper table of contents doc for epub
+    def parse_contents_text
+    end
+
     # Pass in a string
     # Return a Nokogiri nodeset that has been processed
     def parse_chapter_text
@@ -72,10 +76,8 @@ module Book
     def generate_navpoint(play_order)
       <<-EOM
       <navPoint id="#{title.slugify}" playOrder="#{play_order}">
-        <navLabel>
-          <text>#{title}</text>
-          <content src="#{title.slugify}.html" />
-        </navLabel>
+        <navLabel><text>#{title}</text></navLabel>
+        <content src="#{title.slugify}.html" />
       </navPoint>
       EOM
     end

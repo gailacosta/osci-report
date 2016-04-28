@@ -33,10 +33,15 @@ module Book
       Dir.chdir(@output_path) do
         chapters = Dir.glob("*.html")
         chapters.each do |chapter|
-          # Chapter id should include slugified name up to .html extension
           chapter_id = chapter[0..-6].slugify
-          @manifest << generate_item_tag(chapter, chapter_id)
-          @spine    << generate_itemref_tag(chapter_id)
+          # TODO: Contents filename should be specified in config
+          if chapter == "contents.html"
+            @manifest << generate_item_tag(chapter, "toc", nav=true)
+            @spine    << generate_itemref_tag("toc")
+          else
+            @manifest << generate_item_tag(chapter, chapter_id)
+            @spine    << generate_itemref_tag(chapter_id)
+          end
         end
       end
     end

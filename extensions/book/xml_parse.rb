@@ -13,9 +13,10 @@ module Book
       File.open(path) { |f| Nokogiri::XML(f) }
     end
 
-    def generate_item_tag(filename, id)
+    def generate_item_tag(filename, id, nav = false)
       path = Pathname.new(filename)
       media_type = ""
+      props = ""
 
       case path.extname
       when ".html"
@@ -32,8 +33,12 @@ module Book
         media_type = "image/svg"
       end
 
+      if nav == true
+        props = 'properties="nav"'
+      end
+
       <<-EOM
-        <item id="#{id}" href="#{filename}" media-type="#{media_type}"/>
+        <item id="#{id}" href="#{filename}" media-type="#{media_type}" #{props}/>
       EOM
     end
 
