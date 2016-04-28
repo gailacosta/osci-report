@@ -25,6 +25,7 @@ module Book
       copy_images(sitemap)
       copy_css
       build_chapters
+      build_toc
       build_opf(metadata)
     end
 
@@ -92,12 +93,18 @@ module Book
     end
 
     def build_toc
-      # Load TOC NCX file into nokogiri
-      # Populate the metadata
-      # Clean out the <navMap>
-      # Add the first navpoint for the cover file
-      # Loop through the chapters and build <navPoint> fragments, append to <navMap>
-      # Write the file to dist/epub/OEBPS/toc.ncx
+      filename = output_path + "toc.ncx"
+      template = get_template("toc.ncx")
+      template.at_css("docTitle").content = metadata[:title]
+      template.at_css("docAuthor").content = metadata[:author]
+
+      nav_points = ""
+      chapters.each_with_index { |c, i| nav_points << c.generate_navpoint(i + 1) }
+
+      nav_map = Nokogiri::XML::DocumentFragment.parse(nav_points)
+      nav_map.parent = template.at_css("navMap")
+
+      File.open(filename, "w") { |f| f.puts template }
     end
 
     # Expects a hash of book metadata to be passed in

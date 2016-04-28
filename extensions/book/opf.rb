@@ -19,9 +19,14 @@ module Book
 
     def build
       add_metadata
+      add_toc_ncx
       add_chapters
       add_assets
       write_file
+    end
+
+    def add_toc_ncx
+      @manifest << generate_item_tag("toc.ncx", "ncx")
     end
 
     def add_chapters
@@ -43,6 +48,7 @@ module Book
         asset_index = 1
         assets.each do |asset|
           next if Dir.exist? asset
+          next if asset == "toc.ncx"
           asset_id = "asset#{asset_index}"
           @manifest << generate_item_tag(asset, asset_id)
           asset_index += 1

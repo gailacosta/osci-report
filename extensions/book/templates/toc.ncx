@@ -12,11 +12,5 @@
     <text>AUTHOR GOES HERE</text>
   </docAuthor>
   <navMap>
-    <navPoint id="navPoint-1" playOrder="1">
-      <navLabel>
-        <text>TEXT GOES HERE</text>
-        <content src="" />
-      </navLabel>
-    </navPoint>
   </navMap>
 </ncx>

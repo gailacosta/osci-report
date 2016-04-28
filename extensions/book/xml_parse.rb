@@ -20,6 +20,8 @@ module Book
       case path.extname
       when ".html"
         media_type = "application/xhtml+xml"
+      when ".ncx"
+        media_type = "application/x-dtbncx+xml"
       when ".css"
         media_type = "text/css"
       when ".jpg"

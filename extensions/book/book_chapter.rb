@@ -69,6 +69,17 @@ module Book
       fragment
     end
 
+    def generate_navpoint(play_order)
+      <<-EOM
+      <navPoint id="#{title.slugify}" playOrder="#{play_order}">
+        <navLabel>
+          <text>#{title}</text>
+          <content src="#{title.slugify}.html" />
+        </navLabel>
+      </navPoint>
+      EOM
+    end
+
     # Writes the content of this chapter to a new HTML file formatted for epub
     def write_epub_html
       #TODO: Move info about output paths to parent Book object somehow
