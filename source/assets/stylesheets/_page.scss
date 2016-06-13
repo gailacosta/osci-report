@@ -10,11 +10,8 @@ $navbar-height: 60px;
   @include justify-content(center);
 
   background-color: tint($light-gray, 30%);
-  background-image: url('/assets/images/congruent_pentagon.png');
-  background-repeat: repeat;
-  // background-image: url('/assets/images/00087501.jpg');
-  // background-position: center top;
-  // background-size: cover;
+  background-position: center center;
+  background-size: cover;
   height: 200px;
   margin-bottom: $base-spacing;
   margin-top: $navbar-height;
@@ -26,9 +23,14 @@ $navbar-height: 60px;
   .page-title,
   .page-author {
     text-align: center;
-    font-size: 5em;
     color: #fff;
     font-weight: 400;
+    font-size: 2em;
+  }
+
+  .page-title {
+    font-size: 3.5em;
+    font-weight: 700;
   }
 }
 
@@ -99,14 +101,14 @@ $navbar-height: 60px;
 }
 
 .page-main-column .figure {
-  // font-size: 1em;
   font-size: $base-font-size * 1.2;
   line-height: 1.4em;
   font-family: Karla;
-  margin-top: -$base-spacing;
   color: $dark-orange;
   width: 94%;
-  margin: 0px 3%;
+  margin-left: 3%;
+  margin-right: 3%;
+  margin-bottom: $small-spacing * 1.3;
 }
 
 .page-main-column .section-heading {
@@ -128,11 +130,8 @@ $navbar-height: 60px;
   margin-top: $small-spacing * .5;
 }
 
-.page-main-column ul {
+.page-main-column ul.features {
   list-style-type: circle;
-  // font-family: Overpass;
-  // font-size: 1.3em;
-  // line-height: 1.4em;
   font-size: $base-font-size * 1.2;
   line-height: 1.4em;
   font-family: Karla;
@@ -162,11 +161,6 @@ $navbar-height: 60px;
   -o-transition: width 2s ease, padding-bottom 2s ease;
   transition: width 2s ease, padding-bottom 2s ease;
 }
-
-// .video:hover {
-// 	width: 100%;
-// 	padding-bottom: 56.25%;
-// }
 
 .video-quote:hover {
 	 color: $medium-gray;
@@ -199,5 +193,22 @@ $navbar-height: 60px;
   }
   ::before {
     margin-right: $small-spacing;
+  }
+}
+
+#skim-swim-dive {
+  position: relative;
+  #submarine {
+    position: absolute;
+    width: 30%;
+    top: 1%;
+    transition: top 4s ease;
+    display: block;
+    margin-left: 50%;
+  }
+}
+#skim-swim-dive:hover {
+  #submarine {
+    top: 60%;
   }
 }
